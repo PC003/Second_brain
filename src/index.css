@@ -1,0 +1,325 @@
+@import "tailwindcss";
+
+/* ============================================================
+   DESIGN SYSTEM — Second Brain
+   A developer-oriented dark/light productivity app
+   ============================================================ */
+
+@theme {
+  /* ---- Spacing Scale ---- */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+
+  /* ---- Border Radius ---- */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  /* ---- Font Families ---- */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+
+  /* ---- Color Palette ---- */
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+
+  --color-border: var(--border-color);
+  --color-border-subtle: var(--border-subtle);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-inverse: var(--text-inverse);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-subtle: var(--accent-subtle);
+
+  --color-success: var(--success);
+  --color-success-subtle: var(--success-subtle);
+  --color-warning: var(--warning);
+  --color-warning-subtle: var(--warning-subtle);
+  --color-danger: var(--danger);
+  --color-danger-subtle: var(--danger-subtle);
+  --color-info: var(--info);
+  --color-info-subtle: var(--info-subtle);
+
+  --color-easy: #22c55e;
+  --color-medium: #f59e0b;
+  --color-hard: #ef4444;
+}
+
+/* ---- Dark Theme (default) ---- */
+:root {
+  color-scheme: dark;
+
+  --surface-0: #0a0a0f;
+  --surface-1: #12121a;
+  --surface-2: #1a1a25;
+  --surface-3: #242432;
+
+  --border-color: #2a2a3a;
+  --border-subtle: #1e1e2e;
+
+  --text-primary: #e8e8ed;
+  --text-secondary: #a0a0b4;
+  --text-muted: #6b6b80;
+  --text-inverse: #0a0a0f;
+
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
+  --accent-subtle: rgba(99, 102, 241, 0.12);
+
+  --success: #22c55e;
+  --success-subtle: rgba(34, 197, 94, 0.12);
+  --warning: #f59e0b;
+  --warning-subtle: rgba(245, 158, 11, 0.12);
+  --danger: #ef4444;
+  --danger-subtle: rgba(239, 68, 68, 0.12);
+  --info: #3b82f6;
+  --info-subtle: rgba(59, 130, 246, 0.12);
+
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 64px;
+  --topbar-height: 56px;
+}
+
+/* ---- Light Theme ---- */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --surface-0: #fafafa;
+  --surface-1: #ffffff;
+  --surface-2: #f5f5f7;
+  --surface-3: #ebebef;
+
+  --border-color: #e0e0e6;
+  --border-subtle: #eeeef2;
+
+  --text-primary: #111118;
+  --text-secondary: #555566;
+  --text-muted: #999aaa;
+  --text-inverse: #ffffff;
+
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-subtle: rgba(79, 70, 229, 0.08);
+
+  --success: #16a34a;
+  --success-subtle: rgba(22, 163, 74, 0.08);
+  --warning: #d97706;
+  --warning-subtle: rgba(217, 119, 6, 0.08);
+  --danger: #dc2626;
+  --danger-subtle: rgba(220, 38, 38, 0.08);
+  --info: #2563eb;
+  --info-subtle: rgba(37, 99, 235, 0.08);
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+
+@layer base {
+  @font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--surface-0);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+  }
+
+  /* Selection */
+  ::selection {
+    background: var(--accent);
+    color: var(--text-inverse);
+  }
+}
+
+/* ============================================================
+   COMPONENT UTILITIES
+   ============================================================ */
+
+@layer components {
+  /* Sidebar animation */
+  .sidebar-transition {
+    transition: width 200ms cubic-bezier(0.4, 0, 0.2, 1),
+                padding 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Card hover effect */
+  .card-hover {
+    transition: background-color 150ms ease,
+                border-color 150ms ease,
+                box-shadow 150ms ease;
+  }
+  .card-hover:hover {
+    background-color: var(--surface-2);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent-subtle);
+  }
+
+  /* Focus ring */
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Kbd styling */
+  .kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 6px;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    min-width: 20px;
+  }
+
+  /* Status dot */
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Markdown content styling */
+  .markdown-content h1 { font-size: 1.5rem; font-weight: 700; margin: 1.5rem 0 0.75rem; }
+  .markdown-content h2 { font-size: 1.25rem; font-weight: 600; margin: 1.25rem 0 0.625rem; }
+  .markdown-content h3 { font-size: 1.1rem; font-weight: 600; margin: 1rem 0 0.5rem; }
+  .markdown-content p { margin: 0.5rem 0; line-height: 1.7; }
+  .markdown-content ul,
+  .markdown-content ol { margin: 0.5rem 0; padding-left: 1.5rem; }
+  .markdown-content li { margin: 0.25rem 0; }
+  .markdown-content code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background: var(--surface-3);
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+  }
+  .markdown-content pre {
+    background: var(--surface-0);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 0.75rem 0;
+  }
+  .markdown-content pre code {
+    background: none;
+    padding: 0;
+  }
+  .markdown-content a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .markdown-content blockquote {
+    border-left: 3px solid var(--accent);
+    padding-left: 1rem;
+    margin: 0.75rem 0;
+    color: var(--text-secondary);
+  }
+  .markdown-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.75rem 0;
+  }
+  .markdown-content th,
+  .markdown-content td {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border-color);
+    text-align: left;
+  }
+  .markdown-content th {
+    background: var(--surface-2);
+    font-weight: 600;
+  }
+  .markdown-content strong { font-weight: 600; }
+  .markdown-content em { font-style: italic; }
+}
+
+/* ============================================================
+   ANIMATION UTILITIES
+   ============================================================ */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 200ms ease-out forwards;
+}
+
+.animate-slide-in {
+  animation: slideInRight 200ms ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 150ms ease-out forwards;
+}
