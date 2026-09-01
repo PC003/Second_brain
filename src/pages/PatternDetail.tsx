@@ -12,6 +12,7 @@ import type { Pattern, ProblemWithRelations } from "../types";
 import { DIFFICULTY_CONFIG, STATUS_CONFIG } from "../utils/constants";
 import { formatRelativeDate } from "../utils/dates";
 import EmptyState from "../components/common/EmptyState";
+import PatternProgress from "../components/patterns/PatternProgress";
 
 export default function PatternDetail() {
   const { id } = useParams();
@@ -58,20 +59,30 @@ export default function PatternDetail() {
     );
   }
 
+  const solvedCount = problems.filter(p => p.status === "solved" || p.status === "mastered").length;
+  const revisionCount = problems.filter(p => p.status === "need_revision").length;
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
+      <div className="flex items-start gap-3">
         <button
           onClick={() => navigate("/dsa/patterns")}
-          className="w-9 h-9 rounded-lg flex items-center justify-center text-text-muted hover:bg-surface-2 hover:text-text-secondary transition-colors"
+          className="w-9 h-9 mt-1 rounded-lg flex items-center justify-center text-text-muted hover:bg-surface-2 hover:text-text-secondary transition-colors"
         >
           <ArrowLeft size={18} />
         </button>
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary">{pattern.name}</h1>
-          <p className="text-sm text-text-secondary mt-0.5">
-            {pattern.group_name} · {problems.length} problem{problems.length !== 1 ? "s" : ""}
-          </p>
+        <div className="flex-1 max-w-md space-y-3">
+          <div>
+            <h1 className="text-2xl font-bold text-text-primary">{pattern.name}</h1>
+            <p className="text-sm text-text-secondary mt-0.5">
+              {pattern.group_name}
+            </p>
+          </div>
+          <PatternProgress 
+            total={problems.length}
+            solved={solvedCount}
+            needsRevision={revisionCount}
+          />
         </div>
       </div>
 

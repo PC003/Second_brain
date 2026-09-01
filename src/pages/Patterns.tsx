@@ -9,6 +9,7 @@ import { Swords, Loader2, ChevronDown } from "lucide-react";
 import { getPatternsWithStats } from "../services/patternService";
 import type { PatternWithStats } from "../types";
 import EmptyState from "../components/common/EmptyState";
+import PatternProgress from "../components/patterns/PatternProgress";
 
 export default function Patterns() {
   const navigate = useNavigate();
@@ -105,21 +106,17 @@ export default function Patterns() {
                     <div
                       key={pattern.id}
                       onClick={() => navigate(`/dsa/patterns/${pattern.id}`)}
-                      className="flex items-center justify-between px-4 py-3 rounded-lg border border-border-subtle cursor-pointer card-hover"
+                      className="flex flex-col gap-2 px-4 py-3 rounded-lg border border-border-subtle cursor-pointer card-hover"
                     >
                       <div>
                         <p className="text-sm font-medium text-text-primary">{pattern.name}</p>
-                        <p className="text-xs text-text-muted mt-0.5">
-                          {pattern.problem_count || 0} problem{(pattern.problem_count || 0) !== 1 ? "s" : ""}
-                        </p>
                       </div>
-                      <div className="flex items-center gap-2 text-xs">
-                        {(pattern.solved_count || 0) > 0 && (
-                          <span className="text-success">{pattern.solved_count} solved</span>
-                        )}
-                        {(pattern.revision_count || 0) > 0 && (
-                          <span className="text-warning">{pattern.revision_count} revision</span>
-                        )}
+                      <div className="w-full mt-3">
+                        <PatternProgress 
+                          total={pattern.problem_count || 0}
+                          solved={pattern.solved_count || 0}
+                          needsRevision={pattern.revision_count || 0}
+                        />
                       </div>
                     </div>
                   ))}
