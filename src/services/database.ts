@@ -16,6 +16,8 @@ let db: Database | null = null;
 export async function getDb(): Promise<Database> {
   if (!db) {
     db = await Database.load(DB_NAME);
+    // Required to allow triggers to write to the FTS5 virtual table
+    await db.execute("PRAGMA trusted_schema = ON;");
   }
   return db;
 }
