@@ -1,17 +1,28 @@
 // ============================================================
-// ADD PROBLEM PAGE — Second Brain (Phase 1 placeholder)
-// Full form will be implemented in Phase 3
+// ADD PROBLEM PAGE — Second Brain
+// Full-featured form for creating a new DSA/CP problem entry
+// Wraps ProblemForm in create mode
 // ============================================================
 
-import { Plus, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import EmptyState from "../components/common/EmptyState";
+import { toast } from "sonner";
+import ProblemForm from "../components/problems/ProblemForm";
+import { createProblem } from "../services/problemService";
+import type { ProblemFormData } from "../types";
 
 export default function AddProblem() {
   const navigate = useNavigate();
 
+  async function handleSubmit(data: ProblemFormData) {
+    const id = await createProblem(data);
+    toast.success("Problem saved successfully.");
+    navigate(`/problem/${id}`);
+  }
+
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center gap-3">
         <button
           onClick={() => navigate(-1)}
@@ -27,11 +38,8 @@ export default function AddProblem() {
         </div>
       </div>
 
-      <EmptyState
-        icon={<Plus size={24} />}
-        title="Problem form coming soon"
-        description="The problem form will be implemented in Phase 3. Database setup is next."
-      />
+      {/* Form */}
+      <ProblemForm onSubmit={handleSubmit} submitLabel="Save Problem" />
     </div>
   );
 }
