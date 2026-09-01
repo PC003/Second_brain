@@ -4,7 +4,7 @@
 // Route path determines the default filter context
 // ============================================================
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   BookOpen,
@@ -15,7 +15,6 @@ import {
   X,
   ChevronUp,
   ChevronDown,
-  ExternalLink,
   Loader2,
 } from "lucide-react";
 import { getProblems } from "../services/problemService";
@@ -28,7 +27,6 @@ import type {
   Pattern,
   Tag,
   ProblemFilters,
-  Category,
   Difficulty,
   ProblemStatus,
   SortField,

@@ -7,7 +7,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Loader2, Save, AlertCircle, Link as LinkIcon } from "lucide-react";
-import type { Category, CodeLanguage, Difficulty, ProblemFormData, ProblemStatus, Platform } from "../../types";
+import type { Category, Difficulty, ProblemFormData, ProblemStatus, Platform } from "../../types";
 import { DEFAULT_PROBLEM_FORM } from "../../utils/constants";
 import { validateProblemForm, isValidUrl } from "../../utils/validation";
 import { getAllPlatforms } from "../../services/platformService";

@@ -9,8 +9,6 @@ import type {
   ProblemWithRelations,
   ProblemFormData,
   ProblemFilters,
-  Pattern,
-  Tag,
 } from "../types";
 import { getPatternsForProblem } from "./patternService";
 import { getTagsForProblem } from "./tagService";
@@ -227,7 +225,7 @@ export async function getProblems(filters: Partial<ProblemFilters> = {}): Promis
 }
 
 /** Get recently updated problems (for dashboard) */
-export async function getRecentProblems(limit: number = 10): Promise<ProblemWithRelations[]> {
+export async function getRecentProblems(): Promise<ProblemWithRelations[]> {
   return getProblems({ sort_by: "updated_at", sort_order: "desc" });
 }
 

@@ -3,7 +3,7 @@
 // Theme, platforms, patterns, data management — Phase 9
 // ============================================================
 
-import { Settings as SettingsIcon, Sun, Moon, Monitor } from "lucide-react";
+import { Sun, Moon, Monitor } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 
 export default function Settings() {

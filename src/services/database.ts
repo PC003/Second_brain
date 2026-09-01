@@ -32,7 +32,7 @@ export async function execute(
   const result = await database.execute(sql, bindValues);
   return {
     rowsAffected: result.rowsAffected,
-    lastInsertId: result.lastInsertId,
+    lastInsertId: (result.lastInsertId as number) || 0,
   };
 }
 

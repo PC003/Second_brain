@@ -6,7 +6,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Loader2, CheckCircle2, AlertCircle, Eye, ChevronRight } from "lucide-react";
+import { ArrowLeft, Loader2, CheckCircle2, AlertCircle, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { getProblemById } from "../services/problemService";
 import { completeRevision, calculateNextReviewDate } from "../services/revisionService";
@@ -23,7 +23,7 @@ export default function RevisionSession() {
   
   const problemId = Number(id);
   // Get queue from location state, default to just this problem if no queue
-  const [queue, setQueue] = useState<number[]>(location.state?.queue || [problemId]);
+  const [queue] = useState<number[]>(location.state?.queue || [problemId]);
   
   const [problem, setProblem] = useState<ProblemWithRelations | null>(null);
   const [loading, setLoading] = useState(true);

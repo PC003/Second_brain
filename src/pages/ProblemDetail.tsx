@@ -45,7 +45,6 @@ export default function ProblemDetail() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleting, setDeleting] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
 
@@ -79,7 +78,6 @@ export default function ProblemDetail() {
   }
 
   async function handleDelete() {
-    setDeleting(true);
     try {
       await deleteProblem(problemId);
       toast.success("Problem deleted.");
@@ -88,7 +86,6 @@ export default function ProblemDetail() {
       toast.error("Failed to delete problem.");
       console.error(err);
     } finally {
-      setDeleting(false);
       setDeleteOpen(false);
     }
   }

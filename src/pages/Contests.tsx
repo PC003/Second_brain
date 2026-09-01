@@ -9,7 +9,7 @@ import { Trophy, TrendingUp, TrendingDown, ArrowLeft, Loader2, Calendar } from "
 import { getAllContests, getContestById } from "../services/contestService";
 import type { ContestWithRelations } from "../types";
 import EmptyState from "../components/common/EmptyState";
-import { Badge } from "../components/common/Badge";
+import Badge from "../components/common/Badge";
 
 export default function Contests() {
   const { id } = useParams();

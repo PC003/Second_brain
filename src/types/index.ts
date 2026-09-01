@@ -126,7 +126,7 @@ export interface Contest {
 
 export interface ContestWithRelations extends Contest {
   platform_name: string;
-  problems: ContestProblem[];
+  problems: ContestProblemWithDetails[];
 }
 
 export interface ContestProblem {

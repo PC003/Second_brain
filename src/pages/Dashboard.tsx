@@ -28,7 +28,7 @@ export default function Dashboard() {
     try {
       const [statsData, recentData] = await Promise.all([
         getDashboardStats(),
-        getRecentProblems(5),
+        getRecentProblems(),
       ]);
       setStats(statsData);
       setRecentProblems(recentData);
@@ -149,7 +149,7 @@ export default function Dashboard() {
           <h2 className="text-lg font-bold text-text-primary">Recently Updated</h2>
           <div className="bg-surface-1 border border-border rounded-xl shadow-sm overflow-hidden">
             <div className="divide-y divide-border-subtle">
-              {recentProblems.map((problem) => {
+              {recentProblems.slice(0, 5).map((problem) => {
                 const diffConfig = DIFFICULTY_CONFIG[problem.difficulty];
                 const statConfig = STATUS_CONFIG[problem.status];
 

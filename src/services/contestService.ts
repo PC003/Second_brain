@@ -8,7 +8,6 @@ import type {
   Contest,
   ContestWithRelations,
   ContestFormData,
-  ContestProblem,
   ContestProblemWithDetails,
 } from "../types";
 

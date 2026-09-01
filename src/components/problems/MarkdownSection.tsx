@@ -8,7 +8,6 @@ import { useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
-import { Eye, Edit3 } from "lucide-react";
 
 interface MarkdownEditorProps {
   label: string;

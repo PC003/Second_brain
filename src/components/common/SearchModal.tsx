@@ -122,7 +122,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
                 <BookOpen size={12} />
                 DSA
               </div>
-              {dsaResults.map((problem, i) => {
+              {dsaResults.map((problem) => {
                 const globalIndex = results.indexOf(problem);
                 return (
                   <ResultItem
