@@ -203,11 +203,10 @@ export default function ProblemList() {
         </div>
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className={`flex items-center gap-1.5 h-9 px-3 rounded-lg border text-sm transition-colors ${
-            showFilters || hasActiveFilters
-              ? "border-accent text-accent bg-accent-subtle"
-              : "border-border text-text-muted hover:border-border hover:text-text-secondary bg-surface-2"
-          }`}
+          className={`flex items-center gap-1.5 h-9 px-3 rounded-lg border text-sm transition-colors ${showFilters || hasActiveFilters
+            ? "border-accent text-accent bg-accent-subtle"
+            : "border-border text-text-muted hover:border-border hover:text-text-secondary bg-surface-2"
+            }`}
         >
           <SlidersHorizontal size={15} />
           Filters

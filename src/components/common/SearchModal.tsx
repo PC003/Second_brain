@@ -4,6 +4,7 @@
 // ============================================================
 
 import { useEffect, useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { Search, X, Loader2, BookOpen, Code2, FileText } from "lucide-react";
 import { getProblems } from "../../services/problemService";
@@ -79,7 +80,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
   const dsaResults = results.filter((r) => r.category === "dsa");
   const cpResults = results.filter((r) => r.category === "cp");
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
@@ -164,7 +165,8 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
           <span>Esc Close</span>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

@@ -278,6 +278,20 @@ export default function ProblemDetail() {
             </div>
           ))}
 
+          {/* Rough Work (Drawing) */}
+          {problem.rough_work && problem.rough_work.startsWith("data:image") && (
+            <div className="bg-surface-1 border border-border rounded-xl p-5 space-y-3">
+              <h3 className="text-sm font-bold text-text-primary">Rough Work</h3>
+              <div className="rounded-lg overflow-hidden border border-border bg-surface-0 flex items-center justify-center">
+                <img 
+                  src={problem.rough_work} 
+                  alt="Rough Work Drawing" 
+                  className="max-w-full h-auto"
+                />
+              </div>
+            </div>
+          )}
+
           {/* Code */}
           {problem.code && problem.code.trim() && (
             <div className="bg-surface-1 border border-border rounded-xl p-5">
@@ -286,9 +300,9 @@ export default function ProblemDetail() {
           )}
 
           {/* Empty content */}
-          {sections.length === 0 && !problem.code?.trim() && (
+          {sections.length === 0 && !problem.code?.trim() && !problem.rough_work?.trim() && (
             <div className="bg-surface-1 border border-border-subtle rounded-xl p-10 text-center">
-              <p className="text-sm text-text-muted mb-3">No notes or code added yet.</p>
+              <p className="text-sm text-text-muted mb-3">No notes, code, or rough work added yet.</p>
               <Link
                 to={`/problem/${problemId}/edit`}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-white text-sm font-medium hover:bg-accent-hover transition-colors"

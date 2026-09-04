@@ -4,6 +4,7 @@
 // ============================================================
 
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { AlertTriangle } from "lucide-react";
 
 interface ConfirmDialogProps {
@@ -45,7 +46,7 @@ export default function ConfirmDialog({
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div
@@ -63,7 +64,7 @@ export default function ConfirmDialog({
           >
             <AlertTriangle size={20} />
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <h3 className="text-base font-semibold text-text-primary">{title}</h3>
             <p className="text-sm text-text-secondary mt-1">{message}</p>
           </div>
@@ -89,6 +90,7 @@ export default function ConfirmDialog({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

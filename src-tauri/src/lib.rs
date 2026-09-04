@@ -22,6 +22,12 @@ fn get_migrations() -> Vec<Migration> {
             sql: include_str!("../migrations/002_seed_data.sql"),
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 3,
+            description: "add_drawing_board",
+            sql: include_str!("../migrations/003_add_drawing.sql"),
+            kind: MigrationKind::Up,
+        },
     ]
 }
 

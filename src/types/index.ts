@@ -58,6 +58,7 @@ export interface Problem {
   mistake: string;
   lessons: string;
   notes: string;
+  rough_work: string;
   code: string;
   code_language: CodeLanguage;
   last_solved_at: string | null;
@@ -170,6 +171,7 @@ export interface ProblemFormData {
   mistake: string;
   lessons: string;
   notes: string;
+  rough_work: string;
   code: string;
   code_language: CodeLanguage;
   pattern_ids: number[];

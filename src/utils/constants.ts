@@ -72,6 +72,7 @@ export const DEFAULT_PROBLEM_FORM = {
   mistake: "",
   lessons: "",
   notes: "",
+  rough_work: "",
   code: "",
   code_language: "cpp" as const,
   pattern_ids: [] as number[],

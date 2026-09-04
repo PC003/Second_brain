@@ -16,6 +16,7 @@ import PatternSelector from "./PatternSelector";
 import TagSelector from "./TagSelector";
 import { MarkdownEditor } from "./MarkdownSection";
 import { CodeEditorSection } from "./CodeSection";
+import DrawingBoard from "./DrawingBoard";
 
 interface ProblemFormProps {
   initialData?: Partial<ProblemFormData>;
@@ -38,7 +39,7 @@ export default function ProblemForm({
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [duplicateUrl, setDuplicateUrl] = useState<{ id: number; title: string } | null>(null);
-  const [activeTab, setActiveTab] = useState<"basic" | "patterns" | "explanation" | "code">("basic");
+  const [activeTab, setActiveTab] = useState<"basic" | "patterns" | "explanation" | "rough_work" | "code">("basic");
 
   useEffect(() => {
     loadPlatforms();
@@ -110,6 +111,7 @@ export default function ProblemForm({
     { key: "basic" as const, label: "Basic Info" },
     { key: "patterns" as const, label: form.category === "dsa" ? "Patterns" : "Tags" },
     { key: "explanation" as const, label: "Explanation" },
+    { key: "rough_work" as const, label: "Rough Work" },
     { key: "code" as const, label: "Code" },
   ];
 
@@ -287,6 +289,7 @@ export default function ProblemForm({
             placeholder="How did you approach this problem?"
           />
 
+          {/* TURNED OFF:
           <MarkdownEditor
             label="Key Observation"
             value={form.key_observation}
@@ -310,6 +313,7 @@ export default function ProblemForm({
             placeholder="Why is this approach correct?"
             minHeight={120}
           />
+          */}
 
           {/* Complexity */}
           <div className="grid grid-cols-2 gap-4">
@@ -351,12 +355,24 @@ export default function ProblemForm({
             minHeight={120}
           />
 
+          {/* TURNED OFF:
           <MarkdownEditor
             label="Additional Notes"
             value={form.notes}
             onChange={(v) => update("notes", v)}
             placeholder="Any other notes..."
             minHeight={120}
+          />
+          */}
+        </div>
+      )}
+
+      {/* ============ ROUGH WORK TAB ============ */}
+      {activeTab === "rough_work" && (
+        <div className="animate-fade-in">
+          <DrawingBoard
+            value={form.rough_work}
+            onChange={(v) => update("rough_work", v)}
           />
         </div>
       )}

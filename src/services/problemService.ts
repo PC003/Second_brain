@@ -27,9 +27,9 @@ export async function createProblem(data: ProblemFormData): Promise<number> {
     `INSERT INTO problems (
       title, url, platform_id, category, difficulty, status,
       approach, key_observation, algorithm, why_it_works,
-      time_complexity, space_complexity, mistake, lessons, notes,
+      time_complexity, space_complexity, mistake, lessons, notes, rough_work,
       code, code_language, next_review_date, created_at, updated_at
-    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)`,
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)`,
     [
       data.title,
       data.url,
@@ -46,6 +46,7 @@ export async function createProblem(data: ProblemFormData): Promise<number> {
       data.mistake,
       data.lessons,
       data.notes,
+      data.rough_work,
       data.code,
       data.code_language,
       data.next_review_date,
@@ -237,9 +238,9 @@ export async function updateProblem(id: number, data: ProblemFormData): Promise<
     `UPDATE problems SET
       title=$1, url=$2, platform_id=$3, category=$4, difficulty=$5, status=$6,
       approach=$7, key_observation=$8, algorithm=$9, why_it_works=$10,
-      time_complexity=$11, space_complexity=$12, mistake=$13, lessons=$14, notes=$15,
-      code=$16, code_language=$17, next_review_date=$18, updated_at=$19
-    WHERE id=$20`,
+      time_complexity=$11, space_complexity=$12, mistake=$13, lessons=$14, notes=$15, rough_work=$16,
+      code=$17, code_language=$18, next_review_date=$19, updated_at=$20
+    WHERE id=$21`,
     [
       data.title,
       data.url,
@@ -256,6 +257,7 @@ export async function updateProblem(id: number, data: ProblemFormData): Promise<
       data.mistake,
       data.lessons,
       data.notes,
+      data.rough_work,
       data.code,
       data.code_language,
       data.next_review_date,
