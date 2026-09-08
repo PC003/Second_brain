@@ -5,11 +5,15 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Trophy, TrendingUp, TrendingDown, ArrowLeft, Loader2, Calendar } from "lucide-react";
+import { Trophy, TrendingUp, TrendingDown, ArrowLeft, Calendar } from "lucide-react";
+import { toast } from "sonner";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import { getAllContests, getContestById } from "../services/contestService";
 import type { ContestWithRelations } from "../types";
 import EmptyState from "../components/common/EmptyState";
 import Badge from "../components/common/Badge";
+import { getAllPlatforms } from "../services/platformService";
+import { syncUserContests } from "../services/integrationService";
 
 export default function Contests() {
   const { id } = useParams();
@@ -18,6 +22,7 @@ export default function Contests() {
   const [contests, setContests] = useState<ContestWithRelations[]>([]);
   const [activeContest, setActiveContest] = useState<ContestWithRelations | null>(null);
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -34,6 +39,7 @@ export default function Contests() {
       setContests(data);
     } catch (err) {
       console.error("Failed to load contests:", err);
+      toast.error("Failed to load contests.");
     } finally {
       setLoading(false);
     }
@@ -46,17 +52,42 @@ export default function Contests() {
       setActiveContest(data);
     } catch (err) {
       console.error("Failed to load contest detail:", err);
+      toast.error("Failed to load contest details.");
     } finally {
       setLoading(false);
     }
   }
 
+  async function handleSyncAll() {
+    setSyncing(true);
+    let totalAdded = 0;
+    try {
+      const platforms = await getAllPlatforms();
+      for (const p of platforms) {
+        if (p.profile_username) {
+          try {
+            const added = await syncUserContests(p.id, p.name, p.profile_username);
+            totalAdded += added;
+          } catch (e) {
+            console.error(`Skipped contest sync for ${p.name}`);
+          }
+        }
+      }
+      if (totalAdded > 0) {
+        toast.success(`Synced ${totalAdded} new contests!`);
+        await loadAllContests();
+      } else {
+        toast.info("No new contests found.");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to sync contests.");
+    } finally {
+      setSyncing(false);
+    }
+  }
+
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 size={24} className="animate-spin text-text-muted" />
-      </div>
-    );
+    return <LoadingSpinner label="Loading contests..." />;
   }
 
   // --- DETAIL VIEW ---
@@ -182,6 +213,13 @@ export default function Contests() {
             Track your competitive programming contests and rating changes
           </p>
         </div>
+        <button
+          onClick={handleSyncAll}
+          disabled={syncing}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-2 hover:bg-surface-3 text-sm font-medium text-text-primary transition-colors disabled:opacity-50"
+        >
+          {syncing ? "Syncing..." : "Sync Contests"}
+        </button>
       </div>
 
       {contests.length === 0 ? (

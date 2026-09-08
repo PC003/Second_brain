@@ -71,6 +71,7 @@ export default function ProblemDetail() {
       }
     } catch (err) {
       console.error("Failed to load problem:", err);
+      toast.error("Failed to load problem.");
       setNotFound(true);
     } finally {
       setLoading(false);

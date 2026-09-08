@@ -1,0 +1,12 @@
+{
+  "identifier": "allow-http",
+  "description": "Allow HTTP requests",
+  "windows": ["main"],
+  "permissions": [
+    "http:default",
+    {
+      "identifier": "http:allow-request",
+      "allow": [{ "url": "https://*.leetcode.com/*" }, { "url": "https://leetcode.com/*" }, { "url": "https://codeforces.com/*" }]
+    }
+  ]
+}

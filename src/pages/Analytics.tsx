@@ -4,7 +4,9 @@
 // ============================================================
 
 import { useEffect, useState } from "react";
-import { Loader2, TrendingUp, Code2, LayoutGrid, AlertCircle } from "lucide-react";
+import { TrendingUp, Code2, LayoutGrid, AlertCircle, Globe } from "lucide-react";
+import { toast } from "sonner";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import {
   LineChart,
   Line,
@@ -34,7 +36,9 @@ import type {
   DsaStats,
   CpStats,
   PatternOverview,
+  Platform,
 } from "../types";
+import { getAllPlatforms } from "../services/platformService";
 import EmptyState from "../components/common/EmptyState";
 
 // Standard colors
@@ -51,6 +55,7 @@ export default function Analytics() {
   
   const [dsaStats, setDsaStats] = useState<DsaStats | null>(null);
   const [cpStats, setCpStats] = useState<CpStats | null>(null);
+  const [allPlatforms, setAllPlatforms] = useState<Platform[]>([]);
 
   useEffect(() => {
     loadAnalytics();
@@ -59,13 +64,14 @@ export default function Analytics() {
   async function loadAnalytics() {
     setLoading(true);
     try {
-      const [ts, plats, diffs, pats, dsa, cp] = await Promise.all([
+      const [ts, plats, diffs, pats, dsa, cp, pList] = await Promise.all([
         getProblemsOverTime(),
         getPlatformDistribution(),
         getDifficultyDistribution(),
         getPatternOverview(7), // Top 7 patterns
         getDsaStats(),
         getCpStats(),
+        getAllPlatforms(),
       ]);
       
       // Calculate cumulative for time series
@@ -81,19 +87,17 @@ export default function Analytics() {
       setPatterns(pats);
       setDsaStats(dsa);
       setCpStats(cp);
+      setAllPlatforms(pList);
     } catch (err) {
       console.error("Failed to load analytics:", err);
+      toast.error("Failed to load analytics data.");
     } finally {
       setLoading(false);
     }
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 size={24} className="animate-spin text-text-muted" />
-      </div>
-    );
+    return <LoadingSpinner label="Loading analytics..." />;
   }
 
   if (timeSeries.length === 0) {
@@ -171,6 +175,57 @@ export default function Analytics() {
             </ResponsiveContainer>
           </div>
         </div>
+
+      {/* ---- Connected Profiles Stats ---- */}
+      {allPlatforms.some(p => p.stats_json) && (
+        <div className="lg:col-span-2 bg-surface-1 border border-border rounded-xl p-5 shadow-sm">
+          <h3 className="font-semibold text-text-primary flex items-center gap-2 mb-4">
+            <Globe size={16} className="text-accent" />
+            Connected Profiles
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {allPlatforms.filter(p => p.stats_json).map(p => {
+              const stats = JSON.parse(p.stats_json!);
+              return (
+                <div key={p.id} className="bg-surface-2 rounded-lg p-4 border border-border-subtle">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-medium text-text-primary">{p.name}</span>
+                    <span className="text-xs text-text-muted">@{p.profile_username}</span>
+                  </div>
+                  {p.name.toLowerCase().includes("leetcode") ? (
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div className="text-text-secondary">Solved:</div>
+                      <div className="text-text-primary font-medium text-right">{stats.totalSolved || 0}</div>
+                      <div className="text-text-secondary">Rating:</div>
+                      <div className="text-text-primary font-medium text-right">{stats.rating || 0}</div>
+                      <div className="text-text-secondary">Easy/Med/Hard:</div>
+                      <div className="text-text-primary font-medium text-right text-xs">
+                        {stats.easySolved || 0} / {stats.mediumSolved || 0} / {stats.hardSolved || 0}
+                      </div>
+                    </div>
+                  ) : p.name.toLowerCase().includes("codeforces") ? (
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div className="text-text-secondary">Rating:</div>
+                      <div className="text-text-primary font-medium text-right">{stats.rating || 0}</div>
+                      <div className="text-text-secondary">Max Rating:</div>
+                      <div className="text-text-primary font-medium text-right">{stats.maxRating || 0}</div>
+                      <div className="text-text-secondary">Rank:</div>
+                      <div className="text-text-primary font-medium text-right capitalize">{stats.rank || "Unrated"}</div>
+                    </div>
+                  ) : (
+                    <div className="text-xs text-text-muted break-words">
+                      {p.stats_json}
+                    </div>
+                  )}
+                  <div className="mt-3 pt-3 border-t border-border-subtle text-[10px] text-text-muted text-right">
+                    Last synced: {p.last_synced_at ? new Date(p.last_synced_at).toLocaleString() : "Never"}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
         {/* ---- Progress Over Time (Line) ---- */}
         <div className="lg:col-span-2 bg-surface-1 border border-border rounded-xl p-5 shadow-sm">

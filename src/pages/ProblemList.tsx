@@ -15,8 +15,9 @@ import {
   X,
   ChevronUp,
   ChevronDown,
-  Loader2,
 } from "lucide-react";
+import { toast } from "sonner";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import { getProblems } from "../services/problemService";
 import { getAllPlatforms } from "../services/platformService";
 import { getAllPatterns } from "../services/patternService";
@@ -103,6 +104,7 @@ export default function ProblemList() {
       setTags(ta);
     } catch (err) {
       console.error("Failed to load reference data:", err);
+      toast.error("Failed to load filter options.");
     }
   }
 
@@ -147,6 +149,7 @@ export default function ProblemList() {
       setProblems(result);
     } catch (err) {
       console.error("Failed to load problems:", err);
+      toast.error("Failed to load problems.");
     } finally {
       setLoading(false);
     }
@@ -316,9 +319,7 @@ export default function ProblemList() {
 
       {/* ---- Problem List ---- */}
       {loading ? (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 size={24} className="animate-spin text-text-muted" />
-        </div>
+        <LoadingSpinner label="Loading problems..." />
       ) : problems.length === 0 ? (
         <EmptyState
           icon={isDsa ? <BookOpen size={24} /> : <Code2 size={24} />}

@@ -1,6 +1,6 @@
 // ============================================================
 // APP LAYOUT — Second Brain
-// Shell: Sidebar + TopBar + SearchModal + main content area
+// Shell: Sidebar + TopBar + ErrorBoundary + SearchModal + main content area
 // Handles global keyboard shortcuts
 // ============================================================
 
@@ -9,6 +9,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import SearchModal from "../common/SearchModal";
+import ErrorBoundary from "../common/ErrorBoundary";
 
 export default function AppLayout() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -18,15 +19,34 @@ export default function AppLayout() {
   // Global keyboard shortcuts
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      // Cmd+K → Search
+      // Don't intercept when typing in inputs
+      const tag = (e.target as HTMLElement)?.tagName;
+      const isInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+
+      // Cmd+K → Search (always works)
       if (e.metaKey && e.key === "k") {
         e.preventDefault();
         setSearchOpen(true);
+        return;
       }
+
+      // Skip remaining shortcuts when focused on inputs
+      if (isInput) return;
+
       // Cmd+N → Add Problem
       if (e.metaKey && e.key === "n") {
         e.preventDefault();
         navigate("/add-problem");
+      }
+      // Cmd+, → Settings
+      if (e.metaKey && e.key === ",") {
+        e.preventDefault();
+        navigate("/settings");
+      }
+      // Cmd+B → Toggle sidebar
+      if (e.metaKey && e.key === "b") {
+        e.preventDefault();
+        setSidebarCollapsed((prev) => !prev);
       }
     }
 
@@ -41,11 +61,13 @@ export default function AppLayout() {
 
       {/* ---- Main ---- */}
       <div className="flex flex-col flex-1 min-w-0">
-        <TopBar onSearchOpen={() => setSearchOpen(true)} />
+        <TopBar />
 
         <main className="flex-1 overflow-y-auto bg-surface-0">
           <div className="p-6 max-w-[1200px] mx-auto animate-fade-in">
-            <Outlet />
+            <ErrorBoundary>
+              <Outlet />
+            </ErrorBoundary>
           </div>
         </main>
       </div>
@@ -55,3 +77,4 @@ export default function AppLayout() {
     </div>
   );
 }
+

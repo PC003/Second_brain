@@ -87,6 +87,9 @@ export const DB_NAME = "sqlite:second_brain.db";
 export const SHORTCUTS = {
   SEARCH: { key: "k", modifiers: ["meta"] as const, label: "⌘K" },
   NEW_PROBLEM: { key: "n", modifiers: ["meta"] as const, label: "⌘N" },
+  SETTINGS: { key: ",", modifiers: ["meta"] as const, label: "⌘," },
+  TOGGLE_SIDEBAR: { key: "b", modifiers: ["meta"] as const, label: "⌘B" },
   SAVE: { key: "s", modifiers: ["meta"] as const, label: "⌘S" },
   ESCAPE: { key: "Escape", modifiers: [] as const, label: "Esc" },
 } as const;
+

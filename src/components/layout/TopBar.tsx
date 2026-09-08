@@ -3,15 +3,11 @@
 // Global search trigger, breadcrumb, and quick actions
 // ============================================================
 
-import { Search, Plus, Sun, Moon, Monitor } from "lucide-react";
+import { Plus, Sun, Moon, Monitor } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
 
-interface TopBarProps {
-  onSearchOpen: () => void;
-}
-
-export default function TopBar({ onSearchOpen }: TopBarProps) {
+export default function TopBar() {
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
 
@@ -28,14 +24,8 @@ export default function TopBar({ onSearchOpen }: TopBarProps) {
   return (
     <header className="flex items-center h-[var(--topbar-height)] px-5 border-b border-border bg-surface-1/80 backdrop-blur-sm">
       {/* ---- Search ---- */}
-      <button
-        onClick={onSearchOpen}
-        className="flex items-center gap-2.5 h-9 px-3 rounded-lg bg-surface-2 border border-border-subtle text-text-muted text-sm hover:border-border hover:text-text-secondary transition-colors flex-1 max-w-md"
-      >
-        <Search size={15} />
-        <span className="flex-1 text-left">Search problems...</span>
-        <kbd className="kbd">⌘K</kbd>
-      </button>
+      {/* Search feature is still available via Cmd+K, button hidden as requested */}
+      <div className="flex-1 max-w-md"></div>
 
       {/* ---- Spacer ---- */}
       <div className="flex-1" />

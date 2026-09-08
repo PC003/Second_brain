@@ -38,6 +38,10 @@ export interface Platform {
   id: number;
   name: string;
   type: PlatformType;
+  is_default: number;
+  profile_username: string | null;
+  last_synced_at: string | null;
+  stats_json: string | null;
   created_at: string;
 }
 
@@ -287,3 +291,19 @@ export const REVISION_SCHEDULE_OPTIONS: RevisionScheduleOption[] = [
   { label: "Custom date", value: "custom" },
   { label: "No scheduled review", value: "none" },
 ];
+
+// ---- Data Export/Import ----
+
+export interface SecondBrainExport {
+  version: number;
+  exported_at: string;
+  platforms: Platform[];
+  patterns: Pattern[];
+  tags: Tag[];
+  problems: Problem[];
+  problem_patterns: ProblemPattern[];
+  problem_tags: ProblemTag[];
+  contests: Contest[];
+  contest_problems: ContestProblem[];
+  revision_history: RevisionHistory[];
+}

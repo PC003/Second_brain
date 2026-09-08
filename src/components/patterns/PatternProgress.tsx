@@ -22,11 +22,11 @@ export default function PatternProgress({ total, solved, needsRevision }: Patter
 
   return (
     <div className="flex flex-col gap-1.5 w-full">
-      <div className="flex items-center justify-between text-[10px] font-medium">
-        <span className="text-text-muted">{total} total</span>
+      <div className="flex items-center justify-between text-[10px] font-medium pb-1">
+        <span className="text-text-muted whitespace-nowrap">{total} total</span>
         <div className="flex items-center gap-2">
-          {solved > 0 && <span className="text-success">{solved} solved</span>}
-          {needsRevision > 0 && <span className="text-warning">{needsRevision} review</span>}
+          {solved > 0 && <span className="text-success whitespace-nowrap">{solved} solved</span>}
+          {needsRevision > 0 && <span className="text-warning whitespace-nowrap">{needsRevision} review</span>}
         </div>
       </div>
       

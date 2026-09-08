@@ -6,8 +6,9 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Loader2, CheckCircle2, AlertCircle, Eye } from "lucide-react";
+import { ArrowLeft, CheckCircle2, AlertCircle, Eye } from "lucide-react";
 import { toast } from "sonner";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import { getProblemById } from "../services/problemService";
 import { completeRevision, calculateNextReviewDate } from "../services/revisionService";
 import type { ProblemWithRelations } from "../types";
@@ -44,6 +45,7 @@ export default function RevisionSession() {
       setProblem(data);
     } catch (err) {
       console.error("Failed to load problem:", err);
+      toast.error("Failed to load problem for revision.");
     } finally {
       setLoading(false);
     }
@@ -81,11 +83,7 @@ export default function RevisionSession() {
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 size={24} className="animate-spin text-text-muted" />
-      </div>
-    );
+    return <LoadingSpinner label="Loading problem..." />;
   }
 
   if (!problem) {

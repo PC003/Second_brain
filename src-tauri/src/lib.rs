@@ -28,12 +28,19 @@ fn get_migrations() -> Vec<Migration> {
             sql: include_str!("../migrations/003_add_drawing.sql"),
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 4,
+            description: "add_profile_stats",
+            sql: include_str!("../migrations/004_add_profile_stats.sql"),
+            kind: MigrationKind::Up,
+        },
     ]
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_http::init())
         // SQLite database with automatic migrations
         .plugin(
             tauri_plugin_sql::Builder::default()

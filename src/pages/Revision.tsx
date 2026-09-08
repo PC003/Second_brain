@@ -6,7 +6,9 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { RefreshCcw, Loader2, Calendar } from "lucide-react";
+import { RefreshCcw, Calendar } from "lucide-react";
+import { toast } from "sonner";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import { getDueProblems, getUpcomingProblems } from "../services/revisionService";
 import type { ProblemWithRelations } from "../types";
 import RevisionQueue from "../components/revision/RevisionQueue";
@@ -32,6 +34,7 @@ export default function Revision() {
       setUpcoming(upcomingProbs);
     } catch (err) {
       console.error("Failed to load revision queues:", err);
+      toast.error("Failed to load revision data.");
     } finally {
       setLoading(false);
     }
@@ -45,11 +48,7 @@ export default function Revision() {
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 size={24} className="animate-spin text-text-muted" />
-      </div>
-    );
+    return <LoadingSpinner label="Loading revision queue..." />;
   }
 
   if (due.length === 0 && upcoming.length === 0) {

@@ -55,7 +55,7 @@ export default function ConfirmDialog({
       />
 
       {/* Dialog */}
-      <div className="relative bg-surface-1 border border-border rounded-xl shadow-2xl w-full max-w-md p-6 animate-scale-in">
+      <div className="relative bg-surface-1 border border-border rounded-xl shadow-2xl w-full max-w-md shrink-0 min-w-[320px] p-6 animate-scale-in">
         <div className="flex items-start gap-4">
           <div
             className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${

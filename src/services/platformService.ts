@@ -26,19 +26,27 @@ export async function getPlatformsByType(type: string): Promise<Platform[]> {
 }
 
 /** Create a new platform */
-export async function createPlatform(name: string, type: string): Promise<number> {
+export async function createPlatform(name: string, type: string, profileUsername?: string): Promise<number> {
   const result = await execute(
-    "INSERT INTO platforms (name, type) VALUES ($1, $2)",
-    [name, type]
+    "INSERT INTO platforms (name, type, profile_username) VALUES ($1, $2, $3)",
+    [name, type, profileUsername || null]
   );
   return result.lastInsertId;
 }
 
 /** Update a platform */
-export async function updatePlatform(id: number, name: string, type: string): Promise<void> {
+export async function updatePlatform(id: number, name: string, type: string, profileUsername?: string): Promise<void> {
   await execute(
-    "UPDATE platforms SET name = $1, type = $2 WHERE id = $3",
-    [name, type, id]
+    "UPDATE platforms SET name = $1, type = $2, profile_username = $3 WHERE id = $4",
+    [name, type, profileUsername || null, id]
+  );
+}
+
+/** Update a platform's stats */
+export async function updatePlatformStats(id: number, statsJson: string): Promise<void> {
+  await execute(
+    "UPDATE platforms SET stats_json = $1, last_synced_at = datetime('now') WHERE id = $2",
+    [statsJson, id]
   );
 }
 

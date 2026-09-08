@@ -5,7 +5,9 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Home, Plus, BookOpen, Trophy, RefreshCcw, Swords, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { Home, Plus, BookOpen, Trophy, RefreshCcw, Swords } from "lucide-react";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import { getDashboardStats } from "../services/analyticsService";
 import { getRecentProblems } from "../services/problemService";
 import type { DashboardStats, ProblemWithRelations } from "../types";
@@ -34,17 +36,14 @@ export default function Dashboard() {
       setRecentProblems(recentData);
     } catch (err) {
       console.error("Failed to load dashboard data:", err);
+      toast.error("Failed to load dashboard data.");
     } finally {
       setLoading(false);
     }
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 size={24} className="animate-spin text-text-muted" />
-      </div>
-    );
+    return <LoadingSpinner label="Loading dashboard..." />;
   }
 
   return (
