@@ -5,7 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Trophy, TrendingUp, TrendingDown, ArrowLeft, Calendar } from "lucide-react";
+import { Trophy, TrendingUp, TrendingDown, ArrowLeft, Calendar, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import { getAllContests, getContestById } from "../services/contestService";
@@ -14,6 +14,7 @@ import EmptyState from "../components/common/EmptyState";
 import Badge from "../components/common/Badge";
 import { getAllPlatforms } from "../services/platformService";
 import { syncUserContests } from "../services/integrationService";
+import { openExternalUrl } from "../utils/browser";
 
 export default function Contests() {
   const { id } = useParams();
@@ -126,6 +127,18 @@ export default function Contests() {
               </span>
             </div>
           </div>
+          {activeContest.url && (
+            <a
+              href={activeContest.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => openExternalUrl(activeContest.url!, e)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface-1 text-xs font-medium text-text-secondary hover:text-accent hover:border-accent transition-colors"
+            >
+              <ExternalLink size={13} />
+              <span>Open Contest</span>
+            </a>
+          )}
         </div>
 
         {/* Stats Cards */}

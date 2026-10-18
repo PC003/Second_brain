@@ -307,3 +307,16 @@ export interface SecondBrainExport {
   contest_problems: ContestProblem[];
   revision_history: RevisionHistory[];
 }
+
+// ---- Problem Queue ----
+
+export interface ProblemQueueItem {
+  id: number;
+  platform_id: number;
+  title: string;
+  created_at: string;
+}
+
+export interface ProblemQueueItemWithPlatform extends ProblemQueueItem {
+  platform_name: string;
+}

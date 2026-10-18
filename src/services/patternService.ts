@@ -77,6 +77,27 @@ export async function deletePattern(id: number): Promise<void> {
   await execute("DELETE FROM patterns WHERE id = $1", [id]);
 }
 
+/** Delete an entire pattern group and all its patterns */
+export async function deletePatternGroup(groupName: string): Promise<void> {
+  await execute("DELETE FROM patterns WHERE group_name = $1", [groupName]);
+}
+
+/** Check pattern count and problem count for a group */
+export async function getGroupUsageStats(groupName: string): Promise<{ patternCount: number; problemCount: number }> {
+  const pRows = await select<{ count: number }>(
+    "SELECT COUNT(*) as count FROM patterns WHERE group_name = $1",
+    [groupName]
+  );
+  const probRows = await select<{ count: number }>(
+    "SELECT COUNT(DISTINCT pp.problem_id) as count FROM problem_patterns pp INNER JOIN patterns p ON pp.pattern_id = p.id WHERE p.group_name = $1",
+    [groupName]
+  );
+  return {
+    patternCount: pRows[0]?.count || 0,
+    problemCount: probRows[0]?.count || 0,
+  };
+}
+
 /** Check how many problems use this pattern */
 export async function getPatternUsageCount(id: number): Promise<number> {
   const rows = await select<{ count: number }>(

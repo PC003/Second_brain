@@ -41,8 +41,8 @@ A powerful desktop knowledge base for **DSA** (Data Structures & Algorithms) and
 - Dark / Light / System theme with persistence
 - Platform CRUD (add, edit, delete with "in use" protection)
 - Pattern CRUD with inline editing and group management
-- **Export** entire database to JSON
-- **Import** from JSON (full data replacement)
+- **Export** entire database to Excel (.xlsx) workbook with individual sheets
+- **Import** from Excel (.xlsx) or JSON (full data replacement)
 - **Reset** all data with double-confirmation safety
 
 ---
@@ -63,31 +63,82 @@ A powerful desktop knowledge base for **DSA** (Data Structures & Algorithms) and
 
 ---
 
-## Development
+## Development & Multi-Platform Support
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) ≥ 18
-- [Rust](https://www.rust-lang.org/tools/install) (latest stable)
-- [Tauri prerequisites](https://tauri.app/start/prerequisites/) for your OS
+### Prerequisites by Platform
 
-### Setup
+#### 🍎 macOS
+- Xcode Command Line Tools: `xcode-select --install`
+- Node.js ≥ 18
+- Rust (latest stable): `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+
+#### 🪟 Windows
+- [Microsoft Visual Studio C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+- [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) (pre-installed on Windows 10/11)
+- Node.js ≥ 18 & Rust
+
+#### 🐧 Linux (Ubuntu / Debian / Fedora / Arch)
+- **Ubuntu/Debian**:
+  ```bash
+  sudo apt-get update
+  sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev build-essential curl wget file libssl-dev libjavascriptcoregtk-4.1-dev
+  ```
+- **Fedora**:
+  ```bash
+  sudo dnf install webkit2gtk4.1-devel libappindicator-gtk3-devel librsvg2-devel openssl-devel
+  ```
+- **Arch Linux**:
+  ```bash
+  sudo pacman -S webkit2gtk-4.1 libappindicator-gtk3 librsvg
+  ```
+
+### Setup & Run
 ```bash
-# Clone the repo
+# Clone the repository
 git clone https://github.com/yourname/second-brain.git
 cd second-brain
 
 # Install frontend dependencies
 npm install
 
-# Run in development mode
+# Run in development mode (launches desktop window)
 npm run tauri dev
 ```
 
-### Build for Production
+### Build Installers for Production
 ```bash
 npm run tauri build
 ```
-Output binaries will be in `src-tauri/target/release/bundle/`.
+Output bundles will be generated in `src-tauri/target/release/bundle/`:
+- **macOS**: `.dmg` and `.app`
+- **Windows**: `.exe` (NSIS) and `.msi`
+- **Linux**: `.deb` and `.AppImage`
+
+### 🚀 Automated Multi-Platform Releases via GitHub Actions
+
+A pre-configured GitHub Actions workflow ([`.github/workflows/release.yml`](.github/workflows/release.yml)) is ready to automatically build and publish release installers for every OS:
+
+1. **Commit and push** your changes:
+   ```bash
+   git add .
+   git commit -m "feat: prepare v0.1.0 release"
+   git push origin main
+   ```
+
+2. **Create and push a version tag**:
+   ```bash
+   git tag v0.1.0
+   git push origin v0.1.0
+   ```
+
+3. **Automatic Multi-OS Matrix Build**:
+   GitHub Actions will automatically launch concurrent runner machines and build:
+   - **macOS Apple Silicon (M-series)**: `.dmg` installer
+   - **macOS Intel (x86_64)**: `.dmg` installer
+   - **Windows (x64)**: `.exe` (NSIS installer) & `.msi`
+   - **Linux (x64)**: `.deb` package & `.AppImage` standalone binary
+
+All resulting binary packages will be attached directly to your repository's **GitHub Releases** tab and saved as workflow artifacts!
 
 ---
 

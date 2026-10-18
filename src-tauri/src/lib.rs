@@ -1,9 +1,11 @@
 // ============================================================
 // SECOND BRAIN — Tauri Backend (lib.rs)
-// Registers plugins: SQL (SQLite), Dialog, FS, Opener
-// Custom commands for database import/export/backup
+// Open source personal DSA & CP knowledge base
+// Registers plugins: SQL (SQLite), Dialog, FS, Opener, HTTP
+// Cross-platform support for macOS, Windows, and Linux
 // ============================================================
 
+use tauri::Manager;
 use tauri_plugin_sql::{Migration, MigrationKind};
 
 /// Database migrations — run automatically on first connection.
@@ -34,6 +36,12 @@ fn get_migrations() -> Vec<Migration> {
             sql: include_str!("../migrations/004_add_profile_stats.sql"),
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 5,
+            description: "add_problem_queue",
+            sql: include_str!("../migrations/005_add_problem_queue.sql"),
+            kind: MigrationKind::Up,
+        },
     ]
 }
 
@@ -53,6 +61,17 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         // Open URLs in default browser
         .plugin(tauri_plugin_opener::init())
+        .setup(|app| {
+            // Set runtime window icon for local development
+            let icon_bytes = include_bytes!("../icons/128x128@2x.png");
+            if let Ok(icon) = tauri::image::Image::from_bytes(icon_bytes) {
+                if let Some(window) = app.get_webview_window("main") {
+                    let _ = window.set_icon(icon);
+                }
+            }
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
+

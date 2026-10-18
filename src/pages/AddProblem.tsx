@@ -5,17 +5,29 @@
 // ============================================================
 
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import ProblemForm from "../components/problems/ProblemForm";
 import { createProblem } from "../services/problemService";
-import type { ProblemFormData } from "../types";
+import { removeFromQueue } from "../services/queueService";
+import type { ProblemFormData, ProblemQueueItemWithPlatform } from "../types";
 
 export default function AddProblem() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const queueItem = location.state?.queueItem as ProblemQueueItemWithPlatform | undefined;
 
   async function handleSubmit(data: ProblemFormData) {
     const id = await createProblem(data);
+    
+    if (queueItem) {
+      try {
+        await removeFromQueue(queueItem.id);
+      } catch (err) {
+        console.error("Failed to remove item from queue:", err);
+      }
+    }
+    
     toast.success("Problem saved successfully.");
     navigate(`/problem/${id}`);
   }
@@ -39,7 +51,15 @@ export default function AddProblem() {
       </div>
 
       {/* Form */}
-      <ProblemForm onSubmit={handleSubmit} submitLabel="Save Problem" />
+      <ProblemForm
+        initialData={
+          queueItem
+            ? { title: queueItem.title, platform_id: queueItem.platform_id }
+            : undefined
+        }
+        onSubmit={handleSubmit}
+        submitLabel="Save Problem"
+      />
     </div>
   );
 }

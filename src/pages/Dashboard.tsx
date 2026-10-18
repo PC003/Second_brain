@@ -2,15 +2,17 @@
 // DASHBOARD PAGE — Second Brain
 // High-level stats, recent problems, and quick actions
 // ============================================================
-
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Home, Plus, BookOpen, Trophy, RefreshCcw, Swords } from "lucide-react";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import { getDashboardStats } from "../services/analyticsService";
 import { getRecentProblems } from "../services/problemService";
-import type { DashboardStats, ProblemWithRelations } from "../types";
+import { getQueue, addToQueue, removeFromQueue } from "../services/queueService";
+import { getAllPlatforms } from "../services/platformService";
+import type { DashboardStats, ProblemWithRelations, ProblemQueueItemWithPlatform, Platform } from "../types";
 import { DIFFICULTY_CONFIG, STATUS_CONFIG } from "../utils/constants";
 import { formatRelativeDate } from "../utils/dates";
 
@@ -19,21 +21,41 @@ export default function Dashboard() {
 
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [recentProblems, setRecentProblems] = useState<ProblemWithRelations[]>([]);
+  const [queue, setQueue] = useState<ProblemQueueItemWithPlatform[]>([]);
+  const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAddQueueModalOpen, setIsAddQueueModalOpen] = useState(false);
+  const [newQueueTitle, setNewQueueTitle] = useState("");
+  const [newQueuePlatformId, setNewQueuePlatformId] = useState<number>(0);
 
   useEffect(() => {
     loadDashboard();
+    loadPlatforms();
   }, []);
+
+  async function loadPlatforms() {
+    try {
+      const all = await getAllPlatforms();
+      setPlatforms(all);
+      if (all.length > 0) {
+        setNewQueuePlatformId(all[0].id);
+      }
+    } catch (err) {
+      console.error("Failed to load platforms:", err);
+    }
+  }
 
   async function loadDashboard() {
     setLoading(true);
     try {
-      const [statsData, recentData] = await Promise.all([
+      const [statsData, recentData, queueData] = await Promise.all([
         getDashboardStats(),
         getRecentProblems(),
+        getQueue(),
       ]);
       setStats(statsData);
       setRecentProblems(recentData);
+      setQueue(queueData);
     } catch (err) {
       console.error("Failed to load dashboard data:", err);
       toast.error("Failed to load dashboard data.");
@@ -49,12 +71,70 @@ export default function Dashboard() {
   return (
     <div className="space-y-8 animate-fade-in pb-10">
       {/* ---- Header ---- */}
-      <div>
-        <h1 className="text-2xl font-bold text-text-primary">Dashboard</h1>
-        <p className="text-sm text-text-secondary mt-1">
-          Your DSA & Competitive Programming knowledge base
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-text-primary">Dashboard</h1>
+          <p className="text-sm text-text-secondary mt-1">
+            Your DSA & Competitive Programming knowledge base
+          </p>
+        </div>
+        <button
+          onClick={() => setIsAddQueueModalOpen(true)}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-1 border border-border text-text-primary text-sm font-medium hover:bg-surface-2 transition-colors shadow-sm"
+        >
+          <Plus size={16} className="text-text-muted" />
+          Add to Queue
+        </button>
       </div>
+
+      {/* ---- Queue Section ---- */}
+      {queue.length > 0 && (
+        <div className="space-y-3">
+          <h2 className="text-sm font-bold text-text-primary uppercase tracking-wider text-text-muted">Problem Queue</h2>
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin">
+            {queue.map((item) => (
+              <div
+                key={item.id}
+                className="flex-shrink-0 w-72 bg-surface-1 border border-border rounded-xl p-4 flex flex-col justify-between shadow-sm hover:border-border-subtle transition-colors"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-surface-2 text-text-muted">
+                      {item.platform_name}
+                    </span>
+                    <button
+                      onClick={async () => {
+                        try {
+                          await removeFromQueue(item.id);
+                          setQueue(queue.filter(q => q.id !== item.id));
+                          toast.success("Removed from queue.");
+                        } catch (err) {
+                          toast.error("Failed to remove.");
+                        }
+                      }}
+                      className="text-text-muted hover:text-danger transition-colors"
+                      title="Remove from queue"
+                    >
+                      <Trophy size={14} className="hidden" /> {/* Placeholder for alignment */}
+                      <span className="text-xs">Remove</span>
+                    </button>
+                  </div>
+                  <h3 className="text-sm font-semibold text-text-primary line-clamp-2">
+                    {item.title}
+                  </h3>
+                </div>
+                <button
+                  onClick={() => navigate("/add-problem", { state: { queueItem: item } })}
+                  className="mt-4 w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-accent-subtle text-accent text-xs font-semibold hover:bg-accent hover:text-white transition-colors"
+                >
+                  <BookOpen size={14} />
+                  Add to Knowledge Base
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ---- Stats Grid ---- */}
       {stats && (
@@ -125,9 +205,11 @@ export default function Dashboard() {
       {/* ---- Recent Problems & Welcome State ---- */}
       {stats?.total === 0 ? (
         <div className="bg-surface-1 border border-border-subtle rounded-xl p-10 text-center shadow-sm">
-          <div className="w-16 h-16 rounded-2xl bg-surface-2 flex items-center justify-center text-text-muted mx-auto mb-4">
-            <BookOpen size={28} />
-          </div>
+          <img
+            src="/app-icon.png"
+            alt="Second Brain Logo"
+            className="w-16 h-16 object-contain mx-auto mb-4 drop-shadow-md"
+          />
           <h3 className="text-lg font-semibold text-text-primary mb-1">
             Welcome to Second Brain
           </h3>
@@ -191,6 +273,95 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ---- Add Queue Modal ---- */}
+      {isAddQueueModalOpen && createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-surface-0/80 backdrop-blur-sm animate-fade-in"
+            onClick={() => setIsAddQueueModalOpen(false)}
+          />
+          
+          {/* Modal */}
+          <div className="relative bg-surface-1 border border-border rounded-xl shadow-xl w-full max-w-md shrink-0 min-w-[320px] overflow-hidden animate-scale-in">
+            <div className="px-6 py-4 border-b border-border">
+              <h3 className="text-lg font-bold text-text-primary">Add Problem to Queue</h3>
+              <p className="text-sm text-text-secondary">Keep track of problems you want to solve later.</p>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium text-text-secondary">
+                  Platform
+                </label>
+                <select
+                  value={newQueuePlatformId}
+                  onChange={(e) => setNewQueuePlatformId(Number(e.target.value))}
+                  className="w-full h-10 px-3 rounded-lg border border-border bg-surface-2 text-text-primary focus:outline-none focus:border-accent transition-colors"
+                >
+                  {platforms.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium text-text-secondary">
+                  Problem Name
+                </label>
+                <input
+                  type="text"
+                  value={newQueueTitle}
+                  onChange={(e) => setNewQueueTitle(e.target.value)}
+                  placeholder="e.g. Two Sum"
+                  className="w-full h-10 px-3 rounded-lg border border-border bg-surface-2 text-text-primary focus:outline-none focus:border-accent transition-colors"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            <div className="px-6 py-4 bg-surface-2/50 border-t border-border flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setIsAddQueueModalOpen(false);
+                  setNewQueueTitle("");
+                }}
+                className="px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  if (!newQueueTitle.trim()) {
+                    toast.error("Please enter a problem name.");
+                    return;
+                  }
+                  if (!newQueuePlatformId) {
+                    toast.error("Please select a platform.");
+                    return;
+                  }
+                  try {
+                    await addToQueue(newQueuePlatformId, newQueueTitle);
+                    const updatedQueue = await getQueue();
+                    setQueue(updatedQueue);
+                    setIsAddQueueModalOpen(false);
+                    setNewQueueTitle("");
+                    toast.success("Added to queue.");
+                  } catch (err) {
+                    toast.error("Failed to add to queue.");
+                  }
+                }}
+                className="px-4 py-2 rounded-lg bg-accent text-white text-sm font-medium hover:bg-accent-hover transition-colors shadow-sm"
+              >
+                Add to Queue
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -11,7 +11,7 @@ import {
   Plus,
   Edit2,
   Trash2,
-  Download,
+  FileSpreadsheet,
   Upload,
   AlertTriangle,
   Database,
@@ -26,7 +26,7 @@ import {
 import { toast } from "sonner";
 import { useTheme } from "../context/ThemeContext";
 import { save, open } from "@tauri-apps/plugin-dialog";
-import { writeTextFile, readTextFile } from "@tauri-apps/plugin-fs";
+import { writeFile, readFile } from "@tauri-apps/plugin-fs";
 import {
   getAllPlatforms,
   createPlatform,
@@ -39,10 +39,12 @@ import {
   createPattern,
   updatePattern,
   deletePattern,
+  deletePatternGroup,
   getPatternUsageCount,
 } from "../services/patternService";
 import {
-  exportAllData,
+  exportAllDataToExcel,
+  importAllDataFromExcel,
   importAllData,
   resetAllData,
   getDataStats,
@@ -305,24 +307,22 @@ function PatternRow({
           {pattern.problem_count || 0} problem{(pattern.problem_count || 0) !== 1 ? "s" : ""}
         </span>
         <div className="flex items-center gap-1 w-[60px] justify-end">
-          {pattern.is_default === 0 && (
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button
-                onClick={() => setEditing(true)}
-                className="w-7 h-7 rounded-md flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-surface-3 transition-colors"
-                title="Edit"
-              >
-                <Edit2 size={14} />
-              </button>
-              <button
-                onClick={() => setConfirmDelete(true)}
-                className="w-7 h-7 rounded-md flex items-center justify-center text-text-muted hover:text-danger hover:bg-danger-subtle transition-colors"
-                title="Delete"
-              >
-                <Trash2 size={14} />
-              </button>
-            </div>
-          )}
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              onClick={() => setEditing(true)}
+              className="w-7 h-7 rounded-md flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-surface-3 transition-colors"
+              title="Edit"
+            >
+              <Edit2 size={14} />
+            </button>
+            <button
+              onClick={() => setConfirmDelete(true)}
+              className="w-7 h-7 rounded-md flex items-center justify-center text-text-muted hover:text-danger hover:bg-danger-subtle transition-colors"
+              title="Delete"
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -442,22 +442,43 @@ export default function Settings() {
     }
   }
 
+  async function handleDeleteGroup(group: string, count: number) {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete the entire group "${group}" and all its ${count} pattern${count === 1 ? "" : "s"}?\n\nProblems will remain, but pattern associations will be unlinked.`
+      )
+    ) {
+      return;
+    }
+    try {
+      await deletePatternGroup(group);
+      toast.success(`Group "${group}" and its patterns deleted.`);
+      loadPatterns();
+    } catch (err) {
+      toast.error("Failed to delete group.");
+      console.error(err);
+    }
+  }
+
   // ---- Data Management ----
 
   async function handleExport() {
     setExporting(true);
     try {
-      const data = await exportAllData();
-      const json = JSON.stringify(data, null, 2);
+      const buffer = await exportAllDataToExcel();
 
       const filePath = await save({
-        defaultPath: `second-brain-export-${new Date().toISOString().split("T")[0]}.json`,
-        filters: [{ name: "JSON", extensions: ["json"] }],
+        defaultPath: `second-brain-export-${new Date().toISOString().split("T")[0]}.xlsx`,
+        filters: [
+          { name: "Excel Spreadsheet", extensions: ["xlsx"] },
+          { name: "All Files", extensions: ["*"] },
+        ],
       });
 
       if (filePath) {
-        await writeTextFile(filePath, json);
-        toast.success(`Data exported to ${filePath.split("/").pop()}`);
+        await writeFile(filePath, buffer);
+        const fileName = filePath.split(/[/\\]/).pop() || "export.xlsx";
+        toast.success(`Data exported to ${fileName}`);
       }
     } catch (err) {
       toast.error("Export failed. Please try again.");
@@ -472,7 +493,12 @@ export default function Settings() {
     try {
       const filePath = await open({
         multiple: false,
-        filters: [{ name: "JSON", extensions: ["json"] }],
+        filters: [
+          { name: "All Supported", extensions: ["xlsx", "xls", "json"] },
+          { name: "Excel Spreadsheet", extensions: ["xlsx", "xls"] },
+          { name: "JSON Backup", extensions: ["json"] },
+          { name: "All Files", extensions: ["*"] },
+        ],
       });
 
       if (!filePath) {
@@ -480,10 +506,19 @@ export default function Settings() {
         return;
       }
 
-      const content = await readTextFile(filePath as string);
-      const data: SecondBrainExport = JSON.parse(content);
+      const pathStr = filePath as string;
+      const fileBytes = await readFile(pathStr);
+      let result;
 
-      const result = await importAllData(data);
+      if (pathStr.toLowerCase().endsWith(".json")) {
+        const textDecoder = new TextDecoder();
+        const jsonText = textDecoder.decode(fileBytes);
+        const data: SecondBrainExport = JSON.parse(jsonText);
+        result = await importAllData(data);
+      } else {
+        result = await importAllDataFromExcel(fileBytes);
+      }
+
       toast.success(
         `Imported ${result.problems} problems, ${result.patterns} patterns, ${result.platforms} platforms.`
       );
@@ -719,10 +754,19 @@ export default function Settings() {
             const groupPatterns = patterns.filter((p) => p.group_name === group);
             return (
               <div key={group}>
-                <p className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-1 px-3">
-                  {group}
-                  <span className="ml-1.5 font-normal">({groupPatterns.length})</span>
-                </p>
+                <div className="flex items-center justify-between px-3 mb-1 group/header">
+                  <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">
+                    {group}
+                    <span className="ml-1.5 font-normal">({groupPatterns.length})</span>
+                  </p>
+                  <button
+                    onClick={() => handleDeleteGroup(group, groupPatterns.length)}
+                    className="opacity-0 group-hover/header:opacity-100 p-1 text-text-muted hover:text-danger hover:bg-danger-subtle rounded transition-all"
+                    title={`Delete group "${group}" and all its patterns`}
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                </div>
                 <div className="space-y-0.5">
                   {groupPatterns.map((p) => (
                     <PatternRow
@@ -788,9 +832,9 @@ export default function Settings() {
             {exporting ? (
               <Loader2 size={16} className="animate-spin" />
             ) : (
-              <Download size={16} className="text-accent" />
+              <FileSpreadsheet size={16} className="text-accent" />
             )}
-            {exporting ? "Exporting..." : "Export to JSON"}
+            {exporting ? "Exporting..." : "Export to Excel"}
           </button>
           <button
             onClick={handleImport}
@@ -802,12 +846,12 @@ export default function Settings() {
             ) : (
               <Upload size={16} className="text-accent" />
             )}
-            {importing ? "Importing..." : "Import from JSON"}
+            {importing ? "Importing..." : "Import from Excel"}
           </button>
         </div>
 
         <p className="text-xs text-text-muted">
-          Export creates a JSON snapshot of your entire database. Import replaces all existing data with the file contents.
+          Export creates an Excel (.xlsx) workbook of your entire database. Import replaces all existing data with the spreadsheet contents.
         </p>
 
         {/* ---- Danger Zone ---- */}

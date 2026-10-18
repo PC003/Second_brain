@@ -212,6 +212,46 @@ export default function Analytics() {
                       <div className="text-text-secondary">Rank:</div>
                       <div className="text-text-primary font-medium text-right capitalize">{stats.rank || "Unrated"}</div>
                     </div>
+                  ) : p.name.toLowerCase().includes("codechef") ? (
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div className="text-text-secondary">Rating:</div>
+                      <div className="text-text-primary font-medium text-right">{stats.rating || 0}</div>
+                      <div className="text-text-secondary">Highest:</div>
+                      <div className="text-text-primary font-medium text-right">{stats.maxRating || 0}</div>
+                      <div className="text-text-secondary">Stars:</div>
+                      <div className="text-amber-500 font-semibold text-right">
+                        {stats.stars ? `${stats.stars}★` : "Unrated"}
+                      </div>
+                      {stats.totalSolved !== undefined && stats.totalSolved > 0 ? (
+                        <>
+                          <div className="text-text-secondary">Solved:</div>
+                          <div className="text-text-primary font-medium text-right">{stats.totalSolved}</div>
+                        </>
+                      ) : null}
+                      {stats.globalRank ? (
+                        <>
+                          <div className="text-text-secondary">Global Rank:</div>
+                          <div className="text-text-primary font-medium text-right text-xs">#{stats.globalRank}</div>
+                        </>
+                      ) : null}
+                    </div>
+                  ) : p.name.toLowerCase().includes("atcoder") ? (
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div className="text-text-secondary">Rating:</div>
+                      <div className="text-text-primary font-medium text-right">{stats.rating || 0}</div>
+                      <div className="text-text-secondary">Highest:</div>
+                      <div className="text-text-primary font-medium text-right">{stats.maxRating || 0}</div>
+                      <div className="text-text-secondary">Rank:</div>
+                      <div className="text-text-primary font-medium text-right capitalize text-xs truncate" title={stats.rank}>
+                        {stats.rank || "Unrated"}
+                      </div>
+                      {stats.ratedContests !== undefined ? (
+                        <>
+                          <div className="text-text-secondary">Contests:</div>
+                          <div className="text-text-primary font-medium text-right">{stats.ratedContests}</div>
+                        </>
+                      ) : null}
+                    </div>
                   ) : (
                     <div className="text-xs text-text-muted break-words">
                       {p.stats_json}

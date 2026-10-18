@@ -23,6 +23,7 @@ Second_brain/
 │   │   │   ├── Badge.tsx         # Generic badge (variant: success/danger/warning/info/accent)
 │   │   │   ├── ConfirmDialog.tsx # Modal confirm dialog with portal
 │   │   │   ├── EmptyState.tsx    # Icon + title + description + optional CTA
+│   │   │   ├── ErrorBoundary.tsx # Global error boundary for unhandled exceptions
 │   │   │   ├── LoadingSpinner.tsx # Sizes: sm/md/lg, optional label
 │   │   │   ├── SearchModal.tsx   # Cmd+K global search, FTS, keyboard nav
 │   │   │   └── StatusBadge.tsx   # DifficultyBadge + StatusBadge exports
@@ -35,6 +36,7 @@ Second_brain/
 │   │   │   └── PatternProgress.tsx # Progress bar for pattern stats
 │   │   ├── problems/
 │   │   │   ├── CodeSection.tsx    # CodeViewer component
+│   │   │   ├── DrawingBoard.tsx   # Persistent canvas for rough work
 │   │   │   ├── MarkdownSection.tsx # MarkdownViewer component
 │   │   │   └── ProblemForm.tsx    # Full problem create/edit form
 │   │   └── revision/
@@ -60,7 +62,9 @@ Second_brain/
 │   │   ├── tagService.ts         # CRUD + stats for CP tags
 │   │   ├── revisionService.ts    # Due/upcoming queries, complete revision
 │   │   ├── contestService.ts     # CRUD for contests + contest_problems
-│   │   └── analyticsService.ts   # Dashboard stats, charts data queries
+│   │   ├── analyticsService.ts   # Dashboard stats, charts data queries
+│   │   ├── dataService.ts        # Export, import, backup functionality
+│   │   └── integrationService.ts # HTTP integration for platform sync
 │   ├── types/
 │   │   └── index.ts              # All TS interfaces (290 lines)
 │   └── utils/
@@ -74,7 +78,8 @@ Second_brain/
 │   ├── migrations/
 │   │   ├── 001_initial_schema.sql # 7 tables, indexes, FTS5
 │   │   ├── 002_seed_data.sql      # Default platforms + 50+ DSA patterns
-│   │   └── 003_add_drawing.sql    # rough_work column
+│   │   ├── 003_add_drawing.sql    # rough_work column
+│   │   └── 004_add_profile_stats.sql # Profile stats migration
 │   ├── capabilities/
 │   │   └── default.json          # Permissions: core, opener, sql, dialog, fs
 │   ├── Cargo.toml                # Dependencies: tauri 2, serde, sql, dialog, fs, opener
@@ -250,7 +255,7 @@ Key interfaces: `Problem`, `ProblemWithRelations`, `ProblemFormData`, `Platform`
 ## What's Complete vs Pending
 
 ### ✅ Complete
-- Full problem CRUD with markdown editor + code editor
+- Full problem CRUD with markdown editor + code editor + drawing board
 - Platform & tag management (service layer)
 - Pattern browser with stats + CRUD modal
 - FTS5 full-text search with Cmd+K
@@ -262,20 +267,15 @@ Key interfaces: `Problem`, `ProblemWithRelations`, `ProblemFormData`, `Platform`
 - API Integration: Sync LeetCode/Codeforces stats via `tauri-plugin-http`
 - Contest Syncing: Fetch Codeforces and LeetCode contests automatically via API
 - Settings Page: Theme toggle, Platform management (with API Sync), Pattern management
+- Data Management: Export/import/backup functionality via `dataService.ts`
+- Error handling: Added `ErrorBoundary.tsx` component
+- README updated from default Tauri template
 
-### ⚠️ Phase 9 (Pending)
-- Data Management in Settings: Export/import/backup functionality
-- No export/import/backup functionality
-- No `dataService.ts` exists
-- No custom Rust commands (not needed — use existing plugins)
-
-### ⚠️ Phase 10 (Pending)
-- No ErrorBoundary component
-- Most pages use inline `<Loader2>` instead of `<LoadingSpinner>`
-- Error handling is `console.error` only — no user-visible toasts
-- Only 2 keyboard shortcuts (⌘K, ⌘N)
-- README is default Tauri template
-- No data management documentation
+### ⚠️ Pending (Polish & Technical Debt)
+- Replace inline `<Loader2>` with `<LoadingSpinner>` across all pages
+- Standardize user-visible error handling (e.g., replace console.error with `toast.error()`)
+- Add more keyboard shortcuts beyond ⌘K and ⌘N
+- Improve data management documentation
 
 ---
 

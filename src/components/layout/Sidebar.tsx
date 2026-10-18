@@ -17,7 +17,6 @@ import {
   ChevronRight,
   ChevronDown,
   RefreshCcw,
-  Brain,
   Swords,
   Layers,
 } from "lucide-react";
@@ -106,9 +105,11 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {/* ---- Logo / Header ---- */}
       <div className="flex items-center h-[var(--topbar-height)] px-4 border-b border-border-subtle">
         <div className="flex items-center gap-2.5 flex-1 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center flex-shrink-0">
-            <Brain size={18} className="text-white" />
-          </div>
+          <img
+            src="/app-icon.png"
+            alt="Second Brain Logo"
+            className="w-8 h-8 object-contain flex-shrink-0 drop-shadow-sm"
+          />
           {!collapsed && (
             <div className="min-w-0">
               <h1 className="text-sm font-bold text-text-primary truncate">Second Brain</h1>

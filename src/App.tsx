@@ -1,7 +1,7 @@
 // ============================================================
 // APP — Second Brain
 // HashRouter with all application routes
-// HashRouter is required for Tauri (no web server for URL rewrites)
+// Open-source desktop app for macOS, Windows, and Linux
 // ============================================================
 
 import { HashRouter, Routes, Route } from "react-router-dom";
@@ -82,3 +82,4 @@ export default function App() {
     </ThemeProvider>
   );
 }
+

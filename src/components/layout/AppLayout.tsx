@@ -23,8 +23,12 @@ export default function AppLayout() {
       const tag = (e.target as HTMLElement)?.tagName;
       const isInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
 
-      // Cmd+K → Search (always works)
-      if (e.metaKey && e.key === "k") {
+      // Cross-platform modifier key (Cmd on macOS, Ctrl on Windows and Linux)
+      const isMod = e.metaKey || e.ctrlKey;
+      const keyLower = e.key.toLowerCase();
+
+      // Mod+K → Search (always works)
+      if (isMod && keyLower === "k") {
         e.preventDefault();
         setSearchOpen(true);
         return;
@@ -33,18 +37,18 @@ export default function AppLayout() {
       // Skip remaining shortcuts when focused on inputs
       if (isInput) return;
 
-      // Cmd+N → Add Problem
-      if (e.metaKey && e.key === "n") {
+      // Mod+N → Add Problem
+      if (isMod && keyLower === "n") {
         e.preventDefault();
         navigate("/add-problem");
       }
-      // Cmd+, → Settings
-      if (e.metaKey && e.key === ",") {
+      // Mod+, → Settings
+      if (isMod && e.key === ",") {
         e.preventDefault();
         navigate("/settings");
       }
-      // Cmd+B → Toggle sidebar
-      if (e.metaKey && e.key === "b") {
+      // Mod+B → Toggle sidebar
+      if (isMod && keyLower === "b") {
         e.preventDefault();
         setSidebarCollapsed((prev) => !prev);
       }

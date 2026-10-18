@@ -83,13 +83,23 @@ export const DEFAULT_PROBLEM_FORM = {
 /** Database name */
 export const DB_NAME = "sqlite:second_brain.db";
 
-/** Keyboard shortcuts */
+/** Platform detection for cross-platform shortcut labels (⌘ on macOS, Ctrl+ on Windows/Linux) */
+export const IS_MAC =
+  typeof navigator !== "undefined" &&
+  Boolean(
+    (navigator as unknown as { userAgentData?: { platform?: string } }).userAgentData?.platform === "macOS" ||
+    /Mac|iPhone|iPod|iPad/.test(navigator.userAgent || navigator.platform || "")
+  );
+
+export const MOD_KEY = IS_MAC ? "⌘" : "Ctrl+";
+
+/** Keyboard shortcuts (adaptive per OS) */
 export const SHORTCUTS = {
-  SEARCH: { key: "k", modifiers: ["meta"] as const, label: "⌘K" },
-  NEW_PROBLEM: { key: "n", modifiers: ["meta"] as const, label: "⌘N" },
-  SETTINGS: { key: ",", modifiers: ["meta"] as const, label: "⌘," },
-  TOGGLE_SIDEBAR: { key: "b", modifiers: ["meta"] as const, label: "⌘B" },
-  SAVE: { key: "s", modifiers: ["meta"] as const, label: "⌘S" },
+  SEARCH: { key: "k", modifiers: [IS_MAC ? "meta" : "ctrl"] as const, label: `${MOD_KEY}K` },
+  NEW_PROBLEM: { key: "n", modifiers: [IS_MAC ? "meta" : "ctrl"] as const, label: `${MOD_KEY}N` },
+  SETTINGS: { key: ",", modifiers: [IS_MAC ? "meta" : "ctrl"] as const, label: `${MOD_KEY},` },
+  TOGGLE_SIDEBAR: { key: "b", modifiers: [IS_MAC ? "meta" : "ctrl"] as const, label: `${MOD_KEY}B` },
+  SAVE: { key: "s", modifiers: [IS_MAC ? "meta" : "ctrl"] as const, label: `${MOD_KEY}S` },
   ESCAPE: { key: "Escape", modifiers: [] as const, label: "Esc" },
 } as const;
 

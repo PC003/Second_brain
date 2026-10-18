@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 import { getProblemById, deleteProblem, updateProblemStatus } from "../services/problemService";
 import { getRevisionHistory } from "../services/revisionService";
+import { openExternalUrl } from "../utils/browser";
 import { scheduleReview } from "../services/problemService";
 import type { ProblemWithRelations, ProblemStatus, RevisionHistory } from "../types";
 import { StatusBadge, DifficultyBadge } from "../components/common/StatusBadge";
@@ -126,8 +127,8 @@ export default function ProblemDetail() {
   }
 
   function openInBrowser() {
-    if (!problem) return;
-    window.open(problem.url, "_blank");
+    if (!problem?.url) return;
+    openExternalUrl(problem.url);
   }
 
   // ---- Loading / Not Found ----
@@ -237,6 +238,7 @@ export default function ProblemDetail() {
           href={problem.url}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={(e) => openExternalUrl(problem.url, e)}
           className="inline-flex items-center gap-1.5 text-sm text-accent hover:text-accent-hover transition-colors truncate max-w-full"
         >
           <ExternalLink size={13} className="flex-shrink-0" />

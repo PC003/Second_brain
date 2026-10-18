@@ -16,13 +16,21 @@
     "dialog:allow-save",
     "dialog:allow-open",
     "fs:default",
+    "fs:allow-read-file",
+    "fs:allow-write-file",
     "fs:allow-read-text-file",
     "fs:allow-write-text-file",
     {
       "identifier": "http:default",
       "allow": [
         { "url": "https://leetcode.com/*" },
-        { "url": "https://codeforces.com/*" }
+        { "url": "https://*.leetcode.com/*" },
+        { "url": "https://codeforces.com/*" },
+        { "url": "https://*.codeforces.com/*" },
+        { "url": "https://codechef.com/*" },
+        { "url": "https://*.codechef.com/*" },
+        { "url": "https://atcoder.jp/*" },
+        { "url": "https://*.atcoder.jp/*" }
       ]
     }
   ]

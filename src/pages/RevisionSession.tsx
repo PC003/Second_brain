@@ -16,6 +16,7 @@ import { MarkdownViewer } from "../components/problems/MarkdownSection";
 import { CodeViewer } from "../components/problems/CodeSection";
 import EmptyState from "../components/common/EmptyState";
 import { DifficultyBadge, StatusBadge } from "../components/common/StatusBadge";
+import { openExternalUrl } from "../utils/browser";
 
 export default function RevisionSession() {
   const { id } = useParams();
@@ -131,6 +132,7 @@ export default function RevisionSession() {
           href={problem.url}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={(e) => openExternalUrl(problem.url, e)}
           className="text-sm text-text-muted hover:text-accent transition-colors"
         >
           Open Original Problem ↗
