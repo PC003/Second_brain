@@ -142,15 +142,66 @@ All resulting binary packages will be attached directly to your repository's **G
 
 ---
 
+## 📥 Installation & Security Notes by OS
+
+Because Second Brain is free, open-source software built without expensive proprietary enterprise code-signing certificates ($99+/year), your operating system might display an initial safety warning on first launch. Follow the simple steps below:
+
+### 🍎 macOS (Apple Silicon & Intel)
+When opening the `.dmg` or `.app` for the first time, macOS Gatekeeper may display:  
+> *"Second Brain is damaged and can't be opened"* or *"can't be opened because it is from an unidentified developer"*.
+
+**Solution (Choose one):**
+1. **Terminal Command (Quickest):**
+   ```bash
+   xattr -cr "/Applications/Second Brain.app"
+   ```
+   *(Or if it is in your Downloads folder: `xattr -cr ~/Downloads/"Second Brain.app"`)*
+2. **System Settings:**  
+   Open **System Settings** → **Privacy & Security** → scroll to the **Security** section → click **"Open Anyway"**.
+
+---
+
+### 🪟 Windows (Windows 10 / 11)
+When running the `.exe` installer or application, Windows Defender SmartScreen may display:  
+> *"Windows protected your PC — Microsoft Defender SmartScreen prevented an unrecognized app from starting."*
+
+**Solution:**
+1. Click **"More info"** on the popup dialog.
+2. Click **"Run anyway"**.
+
+---
+
+### 🐧 Linux (Ubuntu, Debian, Fedora, Arch)
+You can run the standalone `.AppImage` or install the native `.deb` package:
+
+* **Using the `.AppImage` (Universal):**
+  1. Make the file executable:
+     ```bash
+     chmod +x Second-Brain_amd64.AppImage
+     ./Second-Brain_amd64.AppImage
+     ```
+  2. *Note for Ubuntu 22.04+*: If it does not launch, ensure FUSE is installed:
+     ```bash
+     sudo apt install libfuse2
+     ```
+
+* **Using the `.deb` Package (Debian / Ubuntu):**
+  ```bash
+  sudo dpkg -i second-brain_amd64.deb
+  sudo apt-get install -f # fixes any missing system libraries
+  ```
+
+---
+
 ## Keyboard Shortcuts
 
-| Shortcut | Action |
-|---|---|
-| `⌘K` | Global search |
-| `⌘N` | Add new problem |
-| `⌘,` | Open settings |
-| `⌘B` | Toggle sidebar |
-| `Esc` | Close modal / cancel |
+| Shortcut (macOS) | Shortcut (Windows / Linux) | Action |
+|---|---|---|
+| `⌘K` | `Ctrl+K` | Global search |
+| `⌘N` | `Ctrl+N` | Add new problem |
+| `⌘,` | `Ctrl+,` | Open settings |
+| `⌘B` | `Ctrl+B` | Toggle sidebar |
+| `Esc` | `Esc` | Close modal / cancel |
 
 ---
 
