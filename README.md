@@ -13,7 +13,7 @@ A powerful desktop knowledge base for **DSA** (Data Structures & Algorithms) and
 - Sort by date, title, difficulty, and more
 
 ### 🧩 DSA Patterns
-- 50+ built-in patterns organized by category (Two Pointers, Binary Search, DP, Graphs, etc.)
+- 86+ built-in patterns organized by category (Two Pointers, Binary Search, DP, Graphs, etc.)
 - Pattern browser with problem count and progress tracking
 - Add custom patterns and groups
 - Link problems to multiple patterns
